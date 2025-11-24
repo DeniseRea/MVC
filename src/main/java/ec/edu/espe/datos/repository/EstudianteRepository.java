@@ -6,12 +6,24 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class EstudianteRepository {
+    // Patrón Singleton
+    private static EstudianteRepository instancia;
+
     private List<Estudiante> estudiantes;
     private final String FILE_NAME = "estudiantes.txt";
 
-    public EstudianteRepository() {
+    // Constructor privado para evitar instanciación directa
+    private EstudianteRepository() {
         this.estudiantes = new ArrayList<>();
         cargarDesdeArchivo(); // Carga datos al iniciar
+    }
+
+    // Método para obtener la única instancia (thread-safe)
+    public static synchronized EstudianteRepository getInstancia() {
+        if (instancia == null) {
+            instancia = new EstudianteRepository();
+        }
+        return instancia;
     }
 
     public void crear(Estudiante estudiante) {

@@ -5,10 +5,22 @@ import ec.edu.espe.datos.repository.EstudianteRepository;
 import java.util.List;
 
 public class EstudianteService {
+    // Patrón Singleton
+    private static EstudianteService instancia;
+
     private EstudianteRepository repository;
 
-    public EstudianteService() {
-        this.repository = new EstudianteRepository();
+    // Constructor privado para evitar instanciación directa
+    private EstudianteService() {
+        this.repository = EstudianteRepository.getInstancia();
+    }
+
+    // Método para obtener la única instancia (thread-safe)
+    public static synchronized EstudianteService getInstancia() {
+        if (instancia == null) {
+            instancia = new EstudianteService();
+        }
+        return instancia;
     }
 
     public void guardarEstudiante(String id, String nombres, String edadStr) throws Exception {
