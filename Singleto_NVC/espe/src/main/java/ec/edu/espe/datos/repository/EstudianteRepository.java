@@ -11,7 +11,7 @@ public class EstudianteRepository {
     private List<Estudiante> estudiantes;
     private final String FILE_NAME = "estudiantes.txt";
 
-    // 2. Constructor privado (nadie puede hacer 'new' desde fuera)
+    // 2. Constructor privado
     private EstudianteRepository() {
         this.estudiantes = new ArrayList<>();
         cargarDesdeArchivo();
