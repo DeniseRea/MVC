@@ -5,25 +5,36 @@ import ec.edu.espe.datos.model.Estudiante;
 /**
  * Factory Pattern - Simple Factory
  * Centraliza la creación y validación de objetos Estudiante
+ * 
+ * IMPORTANTE: Siempre valida cédulas ecuatorianas con el algoritmo oficial del INEC
+ * El modo test está disponible SOLO para pruebas unitarias y usa ThreadLocal para aislamiento
  */
 public class EstudianteFactory {
     
-    // Modo de prueba: deshabilita validación de cédula (solo para testing)
-    private static boolean modoTest = false;
+    // Modo test usando ThreadLocal para que solo afecte al thread actual
+    // Esto evita que el modo test afecte otros threads o la aplicación principal
+    private static final ThreadLocal<Boolean> modoTest = ThreadLocal.withInitial(() -> false);
     
     /**
-     * Activa el modo de prueba (deshabilita validación de cédula)
-     * SOLO USAR EN TESTS UNITARIOS
+     * Activa modo test SOLO para el thread actual
+     * ⚠️ SOLO USAR EN TESTS UNITARIOS
      */
     public static void activarModoTest() {
-        modoTest = true;
+        modoTest.set(true);
     }
     
     /**
-     * Desactiva el modo de prueba (habilita validación de cédula)
+     * Desactiva modo test para el thread actual
      */
     public static void desactivarModoTest() {
-        modoTest = false;
+        modoTest.set(false);
+    }
+    
+    /**
+     * Verifica si el modo test está activo en el thread actual
+     */
+    public static boolean estaModoTestActivo() {
+        return modoTest.get();
     }
     
     /**
@@ -46,8 +57,9 @@ public class EstudianteFactory {
             throw new Exception("La edad no puede estar vacía.");
         }
 
-        // 2. Validar formato de cédula ecuatoriana (solo si NO está en modo test)
-        if (!modoTest && !validarCedulaEcuatoriana(id.trim())) {
+        // 2. Validar formato de cédula ecuatoriana usando algoritmo oficial INEC
+        // En modo test, se omite la validación SOLO para el thread actual
+        if (!modoTest.get() && !validarCedulaEcuatoriana(id.trim())) {
             throw new Exception("La cédula ingresada es incorrecta.");
         }
 

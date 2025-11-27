@@ -22,8 +22,30 @@ public class SingletonVsFactoryTest {
         System.out.println("║     PRUEBAS COMPARATIVAS: SINGLETON VS FACTORY PATTERN        ║");
         System.out.println("╚════════════════════════════════════════════════════════════════╝\n");
         
-        // Activar modo test para usar cédulas de prueba
+        // Activar modo test SOLO para este thread de pruebas
         EstudianteFactory.activarModoTest();
+        System.out.println("ℹ️  Modo test activado (validación deshabilitada SOLO para tests)");
+    }
+    
+    @AfterAll
+    public static void cleanup() {
+        // CRÍTICO: Desactivar modo test al finalizar
+        EstudianteFactory.desactivarModoTest();
+        
+        // Limpiar TODOS los datos de prueba del repositorio
+        EstudianteRepository repo = EstudianteRepository.getInstance();
+        repo.listar().clear();
+        
+        System.out.println("\n✅ Todas las pruebas comparativas completadas exitosamente!");
+        System.out.println("✅ Modo test desactivado - Validación restaurada");
+        System.out.println("✅ Repositorio limpiado - Sin datos de prueba persistidos\n");
+    }
+    
+    @AfterEach
+    public void limpiarDespuesDeCadaTest() {
+        // Limpiar después de cada test para evitar interferencias
+        EstudianteRepository repo = EstudianteRepository.getInstance();
+        repo.listar().clear();
     }
     
     // ============================================================================
@@ -69,15 +91,15 @@ public class SingletonVsFactoryTest {
         EstudianteService controlador3 = EstudianteService.getInstance();
         
         // Controlador 1 agrega un estudiante
-        System.out.println("Controlador 1 agrega: Juan Pérez");
+        System.out.println("🔹 Controlador 1 agrega: Juan Pérez");
         controlador1.guardarEstudiante("1234567890", "Juan Pérez", "25");
         
         // Controlador 2 agrega otro estudiante
-        System.out.println("Controlador 2 agrega: María López");
+        System.out.println("🔹 Controlador 2 agrega: María López");
         controlador2.guardarEstudiante("0987654321", "María López", "22");
         
         // Controlador 3 agrega un tercero
-        System.out.println("Controlador 3 agrega: Carlos Ruiz");
+        System.out.println("🔹 Controlador 3 agrega: Carlos Ruiz");
         controlador3.guardarEstudiante("1111111111", "Carlos Ruiz", "30");
         
         // TODOS los controladores deben ver los 3 estudiantes
@@ -157,12 +179,12 @@ public class SingletonVsFactoryTest {
         long duracionSingleton = (finSingleton - inicioSingleton) / 1_000_000;
         
         // 2. FACTORY - Tiempo de creación
-        String[] cedulasValidas = {"1234567890", "0987654321", "1111111111", "0123456789", "0606060606",
-                                    "1010101010", "1313131313", "1414141414", "0105050505", "1717171717"};
+        String[] cedulas = {"1234567890", "0987654321", "1111111111", "2222222222", "3333333333",
+                            "4444444444", "5555555555", "6666666666", "7777777777", "8888888888"};
         long inicioFactory = System.nanoTime();
         for (int i = 0; i < 1000; i++) {
             Estudiante est = EstudianteFactory.crearEstudiante(
-                cedulasValidas[i % 10], 
+                cedulas[i % 10], 
                 "Test" + i, 
                 String.valueOf(20 + (i % 30))
             );
@@ -204,11 +226,10 @@ public class SingletonVsFactoryTest {
         long usoSingleton = memoriaSingleton - memoriaInicial;
         
         // FACTORY - 1000 instancias
-        String[] cedulasValidas = {"1234567890", "0987654321", "1111111111", "0123456789", "0606060606",
-                                    "1010101010", "1313131313", "1414141414", "0105050505", "1717171717"};
+        String[] cedulas = {"1234567890", "0987654321", "1111111111", "2222222222", "3333333333"};
         for (int i = 0; i < 1000; i++) {
             Estudiante est = EstudianteFactory.crearEstudiante(
-                cedulasValidas[i % 10], 
+                cedulas[i % 5], 
                 "Test" + i, 
                 "25"
             );
@@ -244,12 +265,11 @@ public class SingletonVsFactoryTest {
         long tiempoSingleton = (System.nanoTime() - inicioSingleton) / 1_000_000;
         
         // Test Factory bajo carga
-        String[] cedulas = {"1234567890", "0987654321", "1111111111", "0123456789", "0606060606",
-                            "1010101010", "1313131313", "1414141414", "0105050505", "1717171717"};
+        String[] cedulas = {"1234567890", "0987654321", "1111111111", "2222222222", "3333333333"};
         long inicioFactory = System.nanoTime();
         for (int i = 0; i < operaciones; i++) {
             EstudianteFactory.crearEstudiante(
-                cedulas[i % 10],
+                cedulas[i % 5],
                 "Nombre" + i,
                 String.valueOf(18 + (i % 50))
             );
@@ -317,7 +337,7 @@ public class SingletonVsFactoryTest {
             gcAntes += gc.getCollectionCount();
         }
         
-        String[] cedulas = {"1234567890", "0987654321", "1111111111", "0123456789", "0606060606"};
+        String[] cedulas = {"1234567890", "0987654321", "1111111111", "2222222222", "3333333333"};
         for (int i = 0; i < 5000; i++) {
             EstudianteFactory.crearEstudiante(cedulas[i % 5], "Test" + i, "25");
         }
@@ -540,12 +560,5 @@ public class SingletonVsFactoryTest {
         System.out.println("╚════════════════════════════════════════════════════════════════════════╝\n");
         
         assertTrue(true); // Test siempre pasa (es informativo)
-    }
-    
-    @AfterAll
-    public static void cleanup() {
-        // Desactivar modo test
-        EstudianteFactory.desactivarModoTest();
-        System.out.println("\n Todas las pruebas comparativas completadas exitosamente!\n");
     }
 }

@@ -29,7 +29,10 @@ public class EstudianteRepository {
 
     public void crear(Estudiante estudiante) {
         estudiantes.add(estudiante);
-        guardarEnArchivo(); // Guarda cambios
+        // ✅ NO guardar en archivo si estamos en modo test
+        if (!EstudianteFactory.estaModoTestActivo()) {
+            guardarEnArchivo();
+        }
     }
 
     public List<Estudiante> listar() {
@@ -52,12 +55,18 @@ public class EstudianteRepository {
                 break;
             }
         }
-        guardarEnArchivo(); // Actualiza el TXT
+        // ✅ NO guardar en archivo si estamos en modo test
+        if (!EstudianteFactory.estaModoTestActivo()) {
+            guardarEnArchivo();
+        }
     }
 
     public void eliminar(String id) {
         estudiantes.removeIf(e -> e.getId().equals(id));
-        guardarEnArchivo(); // Actualiza el TXT
+        // ✅ NO guardar en archivo si estamos en modo test
+        if (!EstudianteFactory.estaModoTestActivo()) {
+            guardarEnArchivo();
+        }
     }
 
     // --- MÉTODOS PRIVADOS PARA MANEJO DE ARCHIVOS ---
