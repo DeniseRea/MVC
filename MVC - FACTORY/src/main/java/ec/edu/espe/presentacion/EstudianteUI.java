@@ -19,7 +19,7 @@ public class EstudianteUI extends JFrame {
     private JButton btnGuardar, btnEditar, btnEliminar, btnLimpiar, btnBuscar;
 
     public EstudianteUI() {
-        service = new EstudianteService();
+        service = EstudianteService.getInstance(); // Usar Singleton
         initComponents();
         agregarValidaciones(); // <--- AQUÍ AGREGAMOS LAS VALIDACIONES DE TECLADO
         actualizarTabla();

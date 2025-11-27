@@ -8,6 +8,24 @@ import ec.edu.espe.datos.model.Estudiante;
  */
 public class EstudianteFactory {
     
+    // Modo de prueba: deshabilita validación de cédula (solo para testing)
+    private static boolean modoTest = false;
+    
+    /**
+     * Activa el modo de prueba (deshabilita validación de cédula)
+     * SOLO USAR EN TESTS UNITARIOS
+     */
+    public static void activarModoTest() {
+        modoTest = true;
+    }
+    
+    /**
+     * Desactiva el modo de prueba (habilita validación de cédula)
+     */
+    public static void desactivarModoTest() {
+        modoTest = false;
+    }
+    
     /**
      * Crea un estudiante validando todos los datos de entrada
      * @param id Cédula del estudiante
@@ -28,8 +46,8 @@ public class EstudianteFactory {
             throw new Exception("La edad no puede estar vacía.");
         }
 
-        // 2. Validar formato de cédula ecuatoriana
-        if (!validarCedulaEcuatoriana(id.trim())) {
+        // 2. Validar formato de cédula ecuatoriana (solo si NO está en modo test)
+        if (!modoTest && !validarCedulaEcuatoriana(id.trim())) {
             throw new Exception("La cédula ingresada es incorrecta.");
         }
 

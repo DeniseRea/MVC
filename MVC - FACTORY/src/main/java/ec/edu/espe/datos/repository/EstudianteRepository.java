@@ -7,12 +7,24 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class EstudianteRepository {
+    // Singleton Pattern - Instancia única
+    private static EstudianteRepository instance;
+    
     private List<Estudiante> estudiantes;
     private final String FILE_NAME = "estudiantes.txt";
 
-    public EstudianteRepository() {
+    // Constructor privado para Singleton
+    private EstudianteRepository() {
         this.estudiantes = new ArrayList<>();
         cargarDesdeArchivo(); // Carga datos al iniciar
+    }
+    
+    // Método getInstance() para obtener la única instancia
+    public static synchronized EstudianteRepository getInstance() {
+        if (instance == null) {
+            instance = new EstudianteRepository();
+        }
+        return instance;
     }
 
     public void crear(Estudiante estudiante) {

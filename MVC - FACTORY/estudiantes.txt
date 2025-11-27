@@ -1,1 +1,3 @@
-1754921755,Matias Lugmania,24
+1234567890,Juan Pérez,25
+0987654321,María López,22
+1111111111,Carlos Ruiz,30
